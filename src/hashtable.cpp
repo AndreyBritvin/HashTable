@@ -36,8 +36,9 @@ err_code_t ht_dump(hash_table_t* ht)
     PRINT("Every list containment:\n");
     for (size_t i = 0; i < ht->size; i++)
     {
-        PRINT("Bucket #%5zu:\n", i);
+        PRINT("Bucket #%5zu: ", i);
         print_list(&ht->buckets[i]);
+        PRINT(" \n");
     }
 
     PRINT("-------end-------\n");
@@ -67,10 +68,31 @@ err_code_t ht_insert(hash_table_t* ht, char* text)
     assert(text);
 
     hash_t hash = hash_ascii_sum(text, strlen(text));
-    // printf("Hash of %s = %llu\n", text, hash);
     size_t bucket_num = hash % ht->size;
+    my_list* list_to_search = &ht->buckets[bucket_num];
 
-    list_insert(&ht->buckets[bucket_num], get_tail(&ht->buckets[bucket_num]), strlen(text));
+    if (ht_find_elem(ht, text, bucket_num) == NOT_CONTAINS)
+    {
+        list_insert(list_to_search, get_tail(list_to_search), text);
+    }
 
     return OK;
+}
+
+ht_elem_t ht_find_elem(hash_table_t* ht, char* text, size_t bucket_num)
+{
+    assert(ht);
+    assert(text);
+
+    my_list list_to_search = ht->buckets[bucket_num];
+
+    for (size_t i = 0; i < list_to_search.capacity; i++) // TODO: make list founder via PREV and NEXT nodes
+    {
+        if (list_to_search.data[i] && !strcmp(text, list_to_search.data[i])) // TODO: make strncmp for safety
+        {
+            return CONTAINS;
+        }
+    }
+
+    return NOT_CONTAINS;
 }
