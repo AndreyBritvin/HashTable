@@ -1,0 +1,41 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "/mnt/d/MIPT/Summer_school/HashTable/**",
+                "${workspaceFolder}/My_logging_system/include",
+                "${workspaceFolder}/List/include",
+                "${workspaceFolder}/include"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/clang",
+            "cStandard": "c17",
+            "cppStandard": "c++14",
+            "intelliSenseMode": "linux-clang-x64",
+            "compilerPathInCppPropertiesJson": "/usr/bin/clang",
+            "mergeConfigurations": false,
+            "recursiveIncludes": {
+                "reduce": "default",
+                "priority": "afterSystemIncludes",
+                "order": "depthFirst"
+            },
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true
+            }
+        },
+        {
+            "name": "hashtable",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/My_logging_system/include"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/clang",
+            "cStandard": "c17",
+            "cppStandard": "c++14",
+            "intelliSenseMode": "linux-clang-x64"
+        }
+    ],
+    "version": 4
+}
