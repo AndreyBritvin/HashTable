@@ -15,6 +15,7 @@ struct hash_table_t
 err_code_t ht_ctor(hash_table_t* ht, size_t buckets_amount);
 err_code_t ht_dump(hash_table_t* ht);
 err_code_t ht_dtor(hash_table_t* ht);
+err_code_t ht_insert(hash_table_t* ht, char* text);
 
 
 #endif // HASHTABLE_H__

@@ -1,6 +1,8 @@
 #include "hashtable.h"
 #include "utils.h"
 #include <assert.h>
+#include "hashfuncs.h"
+#include <string.h>
 
 err_code_t ht_ctor(hash_table_t* ht, size_t buckets_amount)
 {
@@ -55,6 +57,20 @@ err_code_t ht_dtor(hash_table_t* ht)
 
     ht->size = 0;
     free(ht->buckets); ht->buckets = NULL;
+
+    return OK;
+}
+
+err_code_t ht_insert(hash_table_t* ht, char* text)
+{
+    assert(ht);
+    assert(text);
+
+    hash_t hash = hash_ascii_sum(text, strlen(text));
+    // printf("Hash of %s = %llu\n", text, hash);
+    size_t bucket_num = hash % ht->size;
+
+    list_insert(&ht->buckets[bucket_num], get_tail(&ht->buckets[bucket_num]), strlen(text));
 
     return OK;
 }
