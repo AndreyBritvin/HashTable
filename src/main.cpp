@@ -69,7 +69,7 @@ int main()
     // ht_insert(&my_ht, "5678");
     // ht_insert(&my_ht, "03345");
     // ht_insert(&my_ht, "03345");
-    ht_fill(&my_ht, text_lines, lines_num);
+    ht_fill(&my_ht, text_lines, lines_num - 10);
     ht_dump(&my_ht);
     ht_dtor(&my_ht);
     free(text_lines);

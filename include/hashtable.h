@@ -4,7 +4,7 @@
 #include "utils.h"
 #include "my_list.h"
 
-const size_t av_load_factor = 15;
+const size_t av_load_factor = 100;
 
 enum ht_elem_t
 {

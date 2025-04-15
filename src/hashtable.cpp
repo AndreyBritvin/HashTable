@@ -67,10 +67,10 @@ word_counter_t* ht_insert(hash_table_t* ht, char* text)
     assert(ht);
     assert(text);
 
-    hash_t hash = hash_ascii_sum(text, strlen(text));
+    hash_t hash = hash_crc32(text, strlen(text));
     size_t bucket_num = hash % ht->size;
     my_list* list_to_search = &ht->buckets[bucket_num];
-    printf("Line = %s hash = %llu\n", text, hash);
+    // printf("Line = %s hash = %llu\n", text, hash);
 
     word_counter_t* bucket_elem = ht_find_elem(ht, text, bucket_num);
 
@@ -78,8 +78,8 @@ word_counter_t* ht_insert(hash_table_t* ht, char* text)
     {
         word_counter_t to_add = {text, 0};
         list_insert(list_to_search, get_tail(list_to_search), to_add);
-        // printf("Addr of inserted = %p\n", ht_find_elem(ht, text, bucket_num));
-
+        printf("Addr of inserted = %p\n", ht_find_elem(ht, text, bucket_num));
+        printf("%d - %s\n", list_to_search->size, text);
         // return NOT_CONTAINS;
     }
     // printf("Addr of found = %p\n", ht_find_elem(ht, text, bucket_num));
@@ -94,7 +94,7 @@ word_counter_t* ht_find_elem(hash_table_t* ht, char* text, size_t bucket_num)
     assert(text);
 
     my_list list_to_search = ht->buckets[bucket_num];
-printf("Line = %s bucket num = %u\n", text, bucket_num);
+// printf("Line = %s bucket num = %u\n", text, bucket_num);
     for (size_t i = 0; i < list_to_search.capacity; i++) // TODO: make list founder via PREV and NEXT nodes
     {
         if (list_to_search.data[i].word && !strcmp(text, list_to_search.data[i].word)) // TODO: make strncmp for safety
@@ -110,7 +110,7 @@ err_code_t ht_fill(hash_table_t* ht, char** text_lines, size_t lines_num)
 {
     for (size_t i = 0; i < lines_num; i++)
     {
-        word_counter_t* elem_in_ht = ht_insert(ht, text_lines[i]);
+        word_counter_t* elem_in_ht = ht_insert(ht, text_lines[i]); //TODO: make check if there enough capacity to prevent not found===null error
                         elem_in_ht->count += 1;
     }
 
