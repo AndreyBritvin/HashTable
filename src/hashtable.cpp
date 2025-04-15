@@ -62,7 +62,7 @@ err_code_t ht_dtor(hash_table_t* ht)
     return OK;
 }
 
-ht_elem_t ht_insert(hash_table_t* ht, char* text)
+word_counter_t* ht_insert(hash_table_t* ht, char* text)
 {
     assert(ht);
     assert(text);
@@ -72,17 +72,20 @@ ht_elem_t ht_insert(hash_table_t* ht, char* text)
     my_list* list_to_search = &ht->buckets[bucket_num];
     printf("Line = %s hash = %llu\n", text, hash);
 
-    if (ht_find_elem(ht, text, bucket_num) == NULL)
+    word_counter_t* bucket_elem = ht_find_elem(ht, text, bucket_num);
+
+    if (bucket_elem == NULL)
     {
-        word_counter_t to_add = {text, 1};
+        word_counter_t to_add = {text, 0};
         list_insert(list_to_search, get_tail(list_to_search), to_add);
         // printf("Addr of inserted = %p\n", ht_find_elem(ht, text, bucket_num));
 
-        return NOT_CONTAINS;
+        // return NOT_CONTAINS;
     }
     // printf("Addr of found = %p\n", ht_find_elem(ht, text, bucket_num));
+    bucket_elem = ht_find_elem(ht, text, bucket_num);
 
-    return CONTAINS;
+    return bucket_elem;
 }
 
 word_counter_t* ht_find_elem(hash_table_t* ht, char* text, size_t bucket_num)
@@ -107,7 +110,8 @@ err_code_t ht_fill(hash_table_t* ht, char** text_lines, size_t lines_num)
 {
     for (size_t i = 0; i < lines_num; i++)
     {
-        ht_insert(ht, text_lines[i]);
+        word_counter_t* elem_in_ht = ht_insert(ht, text_lines[i]);
+                        elem_in_ht->count += 1;
     }
 
     return OK;
