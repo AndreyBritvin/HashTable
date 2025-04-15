@@ -62,7 +62,7 @@ err_code_t ht_dtor(hash_table_t* ht)
     return OK;
 }
 
-err_code_t ht_insert(hash_table_t* ht, char* text)
+ht_elem_t ht_insert(hash_table_t* ht, char* text)
 {
     assert(ht);
     assert(text);
@@ -70,29 +70,45 @@ err_code_t ht_insert(hash_table_t* ht, char* text)
     hash_t hash = hash_ascii_sum(text, strlen(text));
     size_t bucket_num = hash % ht->size;
     my_list* list_to_search = &ht->buckets[bucket_num];
+    printf("Line = %s hash = %llu\n", text, hash);
 
-    if (ht_find_elem(ht, text, bucket_num) == NOT_CONTAINS)
+    if (ht_find_elem(ht, text, bucket_num) == NULL)
     {
-        list_insert(list_to_search, get_tail(list_to_search), text);
-    }
+        word_counter_t to_add = {text, 1};
+        list_insert(list_to_search, get_tail(list_to_search), to_add);
+        // printf("Addr of inserted = %p\n", ht_find_elem(ht, text, bucket_num));
 
-    return OK;
+        return NOT_CONTAINS;
+    }
+    // printf("Addr of found = %p\n", ht_find_elem(ht, text, bucket_num));
+
+    return CONTAINS;
 }
 
-ht_elem_t ht_find_elem(hash_table_t* ht, char* text, size_t bucket_num)
+word_counter_t* ht_find_elem(hash_table_t* ht, char* text, size_t bucket_num)
 {
     assert(ht);
     assert(text);
 
     my_list list_to_search = ht->buckets[bucket_num];
-
+printf("Line = %s bucket num = %u\n", text, bucket_num);
     for (size_t i = 0; i < list_to_search.capacity; i++) // TODO: make list founder via PREV and NEXT nodes
     {
-        if (list_to_search.data[i] && !strcmp(text, list_to_search.data[i])) // TODO: make strncmp for safety
+        if (list_to_search.data[i].word && !strcmp(text, list_to_search.data[i].word)) // TODO: make strncmp for safety
         {
-            return CONTAINS;
+            return &list_to_search.data[i];
         }
     }
 
-    return NOT_CONTAINS;
+    return NULL;
+}
+
+err_code_t ht_fill(hash_table_t* ht, char** text_lines, size_t lines_num)
+{
+    for (size_t i = 0; i < lines_num; i++)
+    {
+        ht_insert(ht, text_lines[i]);
+    }
+
+    return OK;
 }
