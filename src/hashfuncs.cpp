@@ -11,12 +11,11 @@ hash_t hash_ascii_sum(void *to_hash, size_t size_to_hash)
 
     return hash;
 }
-
+#include <stdio.h>
 hash_t hash_crc32(void *data, size_t length)
 {
     const hash_t POLY = 0x1EDC6F41; // polynome for crc
-
-    const int* bytes = (const int*) data;
+    const char* bytes = (const char*) data;
     hash_t crc = 0xFFFFFFFF;
 
     for (size_t i = 0; i < length; i++)

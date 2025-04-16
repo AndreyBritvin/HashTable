@@ -15,7 +15,7 @@ MY_LIBS = My_logging_system/log_lib.a
 all: hashtable.out
 
 hashtable.out:$(SRC_FILES) $(BUILD_FILES)
-	@$(CC) $(CFLAGS_DEBUG) $(INCLUDE) $(SRC_FILES) $(MY_LIBS) -o hashtable.out -g
+	@$(CC) $(CFLAGS_DEBUG) $(INCLUDE) $(SRC_FILES) $(MY_LIBS) -o hashtable.out -O0
 
 full_optimise:
 	@$(CC) $(CFLAGS) $(INCLUDE) $(SRC_FILES) My_logging_system/src/my_log.cpp $(MY_LIBS) -o hashtable.out -O0 -g

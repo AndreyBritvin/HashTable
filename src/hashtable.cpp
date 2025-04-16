@@ -66,29 +66,29 @@ word_counter_t* ht_insert(hash_table_t* ht, char* text)
 {
     assert(ht);
     assert(text);
-
+    // printf("IN ht_insert text = %p\n", text);
     hash_t hash = hash_crc32(text, strlen(text));
     size_t bucket_num = hash % ht->size;
     my_list* list_to_search = &ht->buckets[bucket_num];
     // printf("Line = %s hash = %llu\n", text, hash);
 
-    word_counter_t* bucket_elem = ht_find_elem(ht, text, bucket_num);
+    word_counter_t* bucket_elem = ht_find_elem_bucket(ht, text, bucket_num);
 
     if (bucket_elem == NULL)
     {
         word_counter_t to_add = {text, 0};
         list_insert(list_to_search, get_tail(list_to_search), to_add);
-        printf("Addr of inserted = %p\n", ht_find_elem(ht, text, bucket_num));
-        printf("%d - %s\n", list_to_search->size, text);
+        // printf("Addr of inserted = %p\n", ht_find_elem_bucket(ht, text, bucket_num));
+        // printf("%d - %s\n", list_to_search->size, text);
         // return NOT_CONTAINS;
     }
-    // printf("Addr of found = %p\n", ht_find_elem(ht, text, bucket_num));
-    bucket_elem = ht_find_elem(ht, text, bucket_num);
+    // printf("Addr of found = %p\n", ht_find_elem_bucket(ht, text, bucket_num));
+    bucket_elem = ht_find_elem_bucket(ht, text, bucket_num);
 
     return bucket_elem;
 }
 
-word_counter_t* ht_find_elem(hash_table_t* ht, char* text, size_t bucket_num)
+word_counter_t* ht_find_elem_bucket(hash_table_t* ht, char* text, size_t bucket_num)
 {
     assert(ht);
     assert(text);
@@ -97,7 +97,7 @@ word_counter_t* ht_find_elem(hash_table_t* ht, char* text, size_t bucket_num)
 // printf("Line = %s bucket num = %u\n", text, bucket_num);
     for (size_t i = 0; i < list_to_search.capacity; i++) // TODO: make list founder via PREV and NEXT nodes
     {
-        if (list_to_search.data[i].word && !strcmp(text, list_to_search.data[i].word)) // TODO: make strncmp for safety
+        if (list_to_search.data[i].word && !strcmp(text, list_to_search.data[i].word))
         {
             return &list_to_search.data[i];
         }
@@ -105,6 +105,7 @@ word_counter_t* ht_find_elem(hash_table_t* ht, char* text, size_t bucket_num)
 
     return NULL;
 }
+
 
 err_code_t ht_fill(hash_table_t* ht, char** text_lines, size_t lines_num)
 {
@@ -116,3 +117,31 @@ err_code_t ht_fill(hash_table_t* ht, char** text_lines, size_t lines_num)
 
     return OK;
 }
+
+#undef LIST_IS_PTR
+#include "list_dsl.h"
+word_counter_t* ht_find_elem(hash_table_t* ht, char* text)
+{
+    assert(ht);
+    assert(text);
+
+    hash_t hash = hash_crc32(text, strlen(text));
+    size_t bucket_num = hash % ht->size;
+
+    my_list list = ht->buckets[bucket_num];
+
+    labels_t    previous_next   = NEXT[0];
+    while (NEXT[previous_next] != NEXT[0])
+    {
+        // printf("%s(%u) ", DATA[previous_next].word, DATA[previous_next].count);
+        if (!strcmp(text, DATA[previous_next].word))
+        {
+            return &DATA[previous_next];
+        }
+
+        previous_next = NEXT[previous_next];
+    }
+
+    return NULL;
+}
+#include "undef_dsl.h"
