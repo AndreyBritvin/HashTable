@@ -1,4 +1,5 @@
 #include "hashfuncs.h"
+#include <nmmintrin.h>
 
 hash_t hash_ascii_sum(void *to_hash, size_t size_to_hash)
 {
@@ -11,8 +12,22 @@ hash_t hash_ascii_sum(void *to_hash, size_t size_to_hash)
 
     return hash;
 }
-#include <stdio.h>
+
 hash_t hash_crc32(void *data, size_t length)
+{
+    hash_t hash = 0x1EDC6F41; // polynome for crc
+    const char* bytes = (const char*) data;
+
+    for (size_t i = 0; i < length; i++)
+    {
+        hash = _mm_crc32_u8(hash, bytes[i]);
+    }
+
+    return hash;
+}
+
+// #include <stdio.h>
+hash_t hash_crc32_manual(void *data, size_t length)
 {
     const hash_t POLY = 0x1EDC6F41; // polynome for crc
     const char* bytes = (const char*) data;

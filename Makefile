@@ -15,10 +15,10 @@ MY_LIBS = My_logging_system/log_lib.a
 all: hashtable.out
 
 hashtable.out:$(SRC_FILES) $(BUILD_FILES)
-	@$(CC) $(CFLAGS_DEBUG) $(INCLUDE) $(SRC_FILES) $(MY_LIBS) -o hashtable.out -O0
+	@$(CC) $(CFLAGS_DEBUG) $(INCLUDE) $(SRC_FILES) $(MY_LIBS) -o hashtable.out -O0 -g -march=native
 
 full_optimise:
-	@$(CC) $(CFLAGS) $(INCLUDE) $(SRC_FILES) My_logging_system/src/my_log.cpp $(MY_LIBS) -o hashtable.out -O0 -g
+	@$(CC) $(CFLAGS) $(INCLUDE) $(SRC_FILES) My_logging_system/src/my_log.cpp $(MY_LIBS) -o hashtable.out -Og -g -march=native
 
 library:
 	@$(CC) $(CFLAGS) -c $(INCLUDE) $(SRC_FILES) My_logging_system/log_lib.a -o $(BUILD_FILES)
@@ -27,7 +27,7 @@ run:
 	./hashtable.out
 
 perf:
-	perf record --call-graph dwarf -F 99 ./hashtable.out
+	perf record --call-graph dwarf ./hashtable.out
 	hotspot ./perf.data
 
 clean:

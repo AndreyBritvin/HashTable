@@ -5,6 +5,19 @@
 #include <assert.h>
 #include <sys/stat.h>
 
+#define TIME_MEASURE(...)                                               \
+        unsigned int lo = 0, hi = 0;                                    \
+        __asm__ __volatile__ ("rdtscp" : "=a" (lo), "=d" (hi));         \
+        timestamp_t time_begin = ((timestamp_t)hi << 32) | lo;          \
+                                                                        \
+        __VA_ARGS__                                                     \
+                                                                        \
+        __asm__ __volatile__ ("rdtscp" : "=a" (lo), "=d" (hi));         \
+        timestamp_t time_end = ((timestamp_t)hi << 32) | lo;            \
+        printf("Measured time is %10llu ticks\n", time_end - time_begin);
+
+typedef unsigned long long timestamp_t;
+
 int main()
 {
     char* text = NULL;
@@ -30,13 +43,16 @@ int main()
     // ht_dump(&my_ht);
 
     size_t summ = 0;
-    for (size_t i = 0; i < 10000; i += 3)
+    TIME_MEASURE
+    (
+    for (size_t i = 0; i < 100000 * 4; i += 4)
     {
         word_counter_t* ht_data = ht_find_elem(&my_ht, text_lines[i]);
         // printf("%p\n", ht_data);
-        printf("%s (%u)\n", ht_data->word, ht_data->count);
+        // printf("%s (%u)\n", ht_data->word, ht_data->count);
         summ += ht_data->count;
     }
+    )
     printf("Resulted counts of every ... word is %u\n", summ);
 
     ht_dtor(&my_ht);
