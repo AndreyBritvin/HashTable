@@ -18,7 +18,7 @@ hashtable.out:$(SRC_FILES) $(BUILD_FILES)
 	@$(CC) $(CFLAGS_DEBUG) $(INCLUDE) $(SRC_FILES) $(MY_LIBS) -o hashtable.out -O0 -g -march=native
 
 full_optimise:
-	@$(CC) $(CFLAGS) $(INCLUDE) $(SRC_FILES) My_logging_system/src/my_log.cpp $(MY_LIBS) -o hashtable.out -Og -g -march=native
+	@$(CC) $(CFLAGS) $(INCLUDE) $(SRC_FILES) My_logging_system/src/my_log.cpp $(MY_LIBS) -o hashtable.out -O3 -ggdb -march=native -fno-inline
 
 library:
 	@$(CC) $(CFLAGS) -c $(INCLUDE) $(SRC_FILES) My_logging_system/log_lib.a -o $(BUILD_FILES)
