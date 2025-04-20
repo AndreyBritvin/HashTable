@@ -3,6 +3,7 @@
 #include <assert.h>
 #include "hashfuncs.h"
 #include <string.h>
+#include <immintrin.h>
 
 err_code_t ht_ctor(hash_table_t* ht, size_t buckets_amount)
 {
@@ -118,6 +119,18 @@ err_code_t ht_fill(hash_table_t* ht, char** text_lines, size_t lines_num)
     return OK;
 }
 
+// All words should be 32 bytes (or n butes and others with zeros)
+// Return only equal or not equal
+int my_avx_strcmp(const char* str1, const char* str2)
+{
+    __m256i string_1 = _mm256_loadu_si256((__m256i *) str1);
+    __m256i string_2 = _mm256_loadu_si256((__m256i *) str2);
+    __m256i equal    = _mm256_cmpeq_epi64(string_1, string_2);
+    int result = _mm256_movemask_epi8(equal);
+
+    return ~result;
+}
+
 #undef LIST_IS_PTR
 #include "list_dsl.h"
 word_counter_t* ht_find_elem(hash_table_t* ht, char* text)
@@ -134,7 +147,7 @@ word_counter_t* ht_find_elem(hash_table_t* ht, char* text)
     while (NEXT[previous_next] != NEXT[0])
     {
         // printf("%s(%u) ", DATA[previous_next].word, DATA[previous_next].count);
-        if (!strcmp(text, DATA[previous_next].word))
+        if (!my_avx_strcmp(text, DATA[previous_next].word))
         {
             return &DATA[previous_next];
         }
