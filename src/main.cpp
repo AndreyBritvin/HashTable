@@ -28,7 +28,7 @@ int main()
 
     hash_table_t my_ht = {};
 
-    ht_ctor(&my_ht, 600000 / 15);
+    ht_ctor(&my_ht, 32768); // should be 2^n
     // ht_insert(&my_ht, "12345");
     // ht_insert(&my_ht, "5678");
     // ht_insert(&my_ht, "03345");

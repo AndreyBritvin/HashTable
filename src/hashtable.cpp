@@ -139,7 +139,14 @@ word_counter_t* ht_find_elem(hash_table_t* ht, char* text)
     assert(text);
 
     hash_t hash = hash_crc32(text, strlen(text));
-    size_t bucket_num = hash % ht->size;
+    // size_t bucket_num = hash % ht->size;
+    size_t bucket_num = 0;
+    asm volatile(
+    "and %2, %1\n"              // instruction
+    : "=r" (bucket_num)         // output
+    : "r"  ((size_t) hash),     //input
+      "r"  (ht->size - 1)
+    );
 
     my_list list = ht->buckets[bucket_num];
 

@@ -27,7 +27,7 @@ run:
 	./hashtable.out
 
 perf:
-	perf record --call-graph dwarf ./hashtable.out
+	perf record --call-graph dwarf -c 10 ./hashtable.out
 	hotspot ./perf.data
 
 clean:
