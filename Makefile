@@ -15,10 +15,12 @@ MY_LIBS = My_logging_system/log_lib.a
 all: hashtable.out
 
 hashtable.out:$(SRC_FILES) $(BUILD_FILES)
-	@$(CC) $(CFLAGS_DEBUG) $(INCLUDE) $(SRC_FILES) $(MY_LIBS) -o hashtable.out -O0 -g -march=native
+	nasm src/my_hash.asm -o build/my_hash.o -f elf64
+	@$(CC) $(CFLAGS_DEBUG) $(INCLUDE) $(SRC_FILES) build/my_hash.o $(MY_LIBS) -o hashtable.out -O0 -g -march=native
 
 full_optimise:
-	@$(CC) $(CFLAGS) $(INCLUDE) $(SRC_FILES) My_logging_system/src/my_log.cpp $(MY_LIBS) -o hashtable.out -O3 -ggdb -march=native
+	nasm src/my_hash.asm -o build/my_hash.o -f elf64
+	@$(CC) $(CFLAGS) $(INCLUDE) $(SRC_FILES) build/my_hash.o My_logging_system/src/my_log.cpp $(MY_LIBS) -o hashtable.out -O3 -ggdb -march=native
 
 library:
 	@$(CC) $(CFLAGS) -c $(INCLUDE) $(SRC_FILES) My_logging_system/log_lib.a -o $(BUILD_FILES)

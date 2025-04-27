@@ -48,7 +48,7 @@ int main()
     for (size_t i = 0; i < 100000 * 4; i += 4)
     {
         word_counter_t* ht_data = ht_find_elem(&my_ht, text_lines[i]);
-        // printf("%p\n", ht_data);
+        // printf("i = %u, %p\n", i, ht_data);
         // printf("%s (%u)\n", ht_data->word, ht_data->count);
         summ += ht_data->count;
     }

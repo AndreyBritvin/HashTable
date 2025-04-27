@@ -68,7 +68,7 @@ word_counter_t* ht_insert(hash_table_t* ht, char* text)
     assert(ht);
     assert(text);
     // printf("IN ht_insert text = %p\n", text);
-    hash_t hash = hash_crc32(text, strlen(text));
+    hash_t hash = hash_crc32_asm(text, strlen(text));
     size_t bucket_num = hash % ht->size;
     my_list* list_to_search = &ht->buckets[bucket_num];
     // printf("Line = %s hash = %llu\n", text, hash);
@@ -138,16 +138,18 @@ word_counter_t* ht_find_elem(hash_table_t* ht, char* text)
     assert(ht);
     assert(text);
 
-    hash_t hash = hash_crc32(text, strlen(text));
+    hash_t hash = hash_crc32_asm(text, strlen(text));
+    // printf("hash is %lx\n", hash);
+
     // size_t bucket_num = hash % ht->size;
     size_t bucket_num = 0;
     asm volatile(
     "and %2, %1\n"              // instruction
     : "=r" (bucket_num)         // output
-    : "r"  ((size_t) hash),     //input
+    : "r"  ((size_t) hash),     // input
       "r"  (ht->size - 1)
     );
-
+    // printf("Bicket_num is %u, string is %s, hash is %lx\n", bucket_num, text, hash);
     my_list list = ht->buckets[bucket_num];
 
     labels_t    previous_next   = NEXT[0];
